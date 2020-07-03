@@ -7,25 +7,25 @@ namespace DrawGrid
 {
     public static class GridTool
     {
-        public static void Draw(Panel panel)
+        public static void Draw(Canvas canvas)
         {
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
             double scaleX = 30;
             double currentPosY = 0;
             currentPosY += scaleX;
-            while (currentPosY < panel.ActualHeight)
+            while (currentPosY < canvas.ActualHeight)
             {
                 Line line = new Line
                 {
                     X1 = 0,
                     Y1 = currentPosY,
-                    X2 = panel.ActualWidth,
+                    X2 = canvas.ActualWidth,
                     Y2 = currentPosY,
                     Stroke = gridBrush,
                     StrokeThickness = 0.1
                 };
-                panel.Children.Add(line);
+                canvas.Children.Add(line);
                 
                 currentPosY += scaleX;
             }
@@ -33,32 +33,38 @@ namespace DrawGrid
             double scaleY = 30;
             double currentPosX = 0;
             currentPosX += scaleY;
-            while (currentPosX < panel.ActualWidth)
+            while (currentPosX < canvas.ActualWidth)
             {
                 Line line = new Line
                 {
                     X1 = currentPosX,
                     Y1 = 0,
                     X2 = currentPosX,
-                    Y2 = panel.ActualHeight,
+                    Y2 = canvas.ActualHeight,
                     Stroke = gridBrush,
                     StrokeThickness = 0.1
                 };
-                panel.Children.Add(line);
+                canvas.Children.Add(line);
                 
                 currentPosX += scaleY;
             }
         }
 
-        public static void DrawCircle(Panel panel)
+        public static void DrawCircle(Canvas canvas)
         { 
             var random = new Random();
-            var centerX = random.Next(1, (int)panel.ActualWidth)/2;
-            var centerY = random.Next(1, (int)panel.ActualHeight)/2;
+            var centerX = random.Next(1, (int)canvas.ActualWidth)/2;
+            var centerY = random.Next(1, (int)canvas.ActualHeight)/2;
             double step = 20;
             double radius = random.Next(20, 100);
             double cursor = 0;
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
+
+            // 画一个圆边
+            var myEllipse = new Ellipse {Stroke = Brushes.Gray, Width = radius * 2, Height = radius * 2};
+            Canvas.SetLeft(myEllipse, centerX - radius);
+            Canvas.SetTop(myEllipse, centerY - radius);
+            canvas.Children.Add(myEllipse);
 
             while (cursor <= radius)
             {
@@ -72,7 +78,7 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                panel.Children.Add(aa);
+                canvas.Children.Add(aa);
 
                 Line bb = new Line
                 {
@@ -83,7 +89,7 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                panel.Children.Add(bb);
+                canvas.Children.Add(bb);
 
                 Line cc = new Line
                 {
@@ -94,7 +100,7 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                panel.Children.Add(cc);
+                canvas.Children.Add(cc);
 
                 Line dd = new Line
                 {
@@ -105,7 +111,7 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                panel.Children.Add(dd);
+                canvas.Children.Add(dd);
 
                 cursor += step;
             }
