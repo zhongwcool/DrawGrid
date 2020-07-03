@@ -1,14 +1,15 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace DrawGrid
 {
-    public class GridTool
+    public static class GridTool
     {
         public static void Draw(Panel panel)
         {
-            SolidColorBrush gridBrush = new SolidColorBrush {Color = Colors.Red};
+            var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
             double scaleX = 30;
             double currentPosY = 0;
@@ -50,17 +51,18 @@ namespace DrawGrid
         }
 
         public static void DrawCircle(Panel panel)
-        {
-            var centerX = panel.ActualWidth/2;
-            var centerY = panel.ActualHeight/2;
+        { 
+            var random = new Random();
+            var centerX = random.Next(1, (int)panel.ActualWidth)/2;
+            var centerY = random.Next(1, (int)panel.ActualHeight)/2;
             double step = 20;
-            double radius = 100;
+            double radius = random.Next(20, 100);
             double cursor = 0;
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
             while (cursor <= radius)
             {
-                var contour = System.Math.Sqrt(radius * radius - System.Math.Pow(cursor, 2));
+                var contour = Math.Sqrt(radius * radius - Math.Pow(cursor, 2));
                 Line aa = new Line
                 {
                     X1 = centerX - contour,
