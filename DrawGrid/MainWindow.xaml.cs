@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace DrawGrid
@@ -17,6 +19,12 @@ namespace DrawGrid
             InitializeComponent();
             InitData();
             SizeChanged += MainWindow_Resize;
+
+            var brush = new ImageBrush
+            {
+                ImageSource = new BitmapImage(new Uri("pack://application:,,,/Image/20141008063846.jpg"))
+            };
+            MyCircle.Background = brush;
         }
         
         private void MainWindow_Resize(object sender, EventArgs e)
@@ -31,7 +39,7 @@ namespace DrawGrid
         private readonly Random _random = new Random();
         private void ButtonPath_OnClick(object sender, RoutedEventArgs e)
         {
-            _collection.Add(new Point(_random.Next(1, (int)ActualWidth),_random.Next(1, (int)ActualHeight)));
+            _collection.Add(new Point(_random.Next(1, (int)MyGrid.Width),_random.Next(1, (int)MyGrid.Height)));
             MyGrid.Children.Clear();
             GridTool.Draw(MyGrid);
             DrawPath(MyGrid);
@@ -47,8 +55,8 @@ namespace DrawGrid
 
         private void ButtonDrawCircle_OnClick(object sender, RoutedEventArgs e)
         {
-            MyGrid.Children.Clear();
-            GridTool.DrawCircle(MyGrid);
+            MyCircle.Children.Clear();
+            GridTool.DrawCircle(MyCircle);
         }
 
         private void InitData()
@@ -56,9 +64,6 @@ namespace DrawGrid
             _collection.Add(new Point(20,20));
             _collection.Add(new Point(40,25));
             _collection.Add(new Point(60,40));
-            _collection.Add(new Point(80,120));
-            _collection.Add(new Point(120,140));
-            _collection.Add(new Point(200,180));
         }
     }
 }

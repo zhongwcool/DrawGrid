@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DrawGrid"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Canvas x:Name="MyGrid">
-            <!--<Path Stroke="Black" Fill="LightBlue" Data="M 100, 200 A 100, 100 0 1 0 100, 199 Z"/>-->
-            <!--<Ellipse Width="200" Height="200" Stroke="Aqua" StrokeThickness="1" Fill="LightGray"/>-->
-            <!--<Ellipse Width="5" Height="5" Stroke="Black" StrokeThickness="1"/>-->
-            <Polyline Stroke="Black" Points="20,20 40,25 60,40 80,120 120,140 200,180"/>
-        </Canvas>
+        Title="MainWindow" Height="500" Width="800">
+    <Grid Background="Gray">
+        <Canvas x:Name="MyCircle" />
+        <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="5"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Canvas x:Name="MyGrid" Width="100" Height="200" Background="#66FFFFFF" />
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="0" Opacity="1" />
+            </Border.Effect>
+        </Border>
         <WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <Button Click="ButtonPath_OnClick">左手轨迹</Button>
             <Button Click="ButtonDrawCircle_OnClick">右手画圆</Button>

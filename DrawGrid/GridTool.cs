@@ -11,7 +11,7 @@ namespace DrawGrid
         {
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
-            double scaleX = 30;
+            double scaleX = 10;
             double currentPosY = 0;
             currentPosY += scaleX;
             while (currentPosY < canvas.ActualHeight)
@@ -30,7 +30,7 @@ namespace DrawGrid
                 currentPosY += scaleX;
             }
             
-            double scaleY = 30;
+            double scaleY = 10;
             double currentPosX = 0;
             currentPosX += scaleY;
             while (currentPosX < canvas.ActualWidth)
@@ -61,7 +61,7 @@ namespace DrawGrid
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
             // 画一个圆边
-            var myEllipse = new Ellipse {Stroke = Brushes.Gray, Width = radius * 2, Height = radius * 2};
+            var myEllipse = new Ellipse {Stroke = Brushes.Black, Width = radius * 2, Height = radius * 2};
             Canvas.SetLeft(myEllipse, centerX - radius);
             Canvas.SetTop(myEllipse, centerY - radius);
             canvas.Children.Add(myEllipse);
