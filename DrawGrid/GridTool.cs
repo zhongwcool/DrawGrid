@@ -11,7 +11,7 @@ namespace DrawGrid
         {
             var diffX = canvas.ActualWidth/2;
             var offsetX = canvas.ActualWidth - diffX;
-            var diffY = 30;
+            var diffY = 10;
             var offsetY = canvas.ActualHeight - diffY;
             canvas.RenderTransform = SetAngleXy(180, offsetX, offsetY);
 
@@ -36,6 +36,18 @@ namespace DrawGrid
                 StrokeThickness = 1
             };
             canvas.Children.Add(lineAxisX);
+
+            var labelX = new TextBlock {Text = "x"};
+            var labelY = new TextBlock {Text = "y"};
+            var rotateTransform = new RotateTransform(180);
+            labelX.LayoutTransform = rotateTransform;
+            labelY.LayoutTransform = rotateTransform;
+            canvas.Children.Add(labelX);
+            canvas.Children.Add(labelY);
+            Canvas.SetLeft(labelX, 0 - diffX);
+            Canvas.SetTop(labelX, 0);
+            Canvas.SetLeft(labelY, 0);
+            Canvas.SetTop(labelY, canvas.ActualHeight - diffY - 10);
 
             DrawGrid(canvas, diffX, diffY);
         }
