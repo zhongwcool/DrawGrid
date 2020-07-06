@@ -9,42 +9,95 @@ namespace DrawGrid
     {
         public static void Draw(Canvas canvas)
         {
+            var diffX = canvas.ActualWidth/2;
+            var offsetX = canvas.ActualWidth - diffX;
+            var diffY = 30;
+            var offsetY = canvas.ActualHeight - diffY;
+            canvas.RenderTransform = SetAngleXy(180, offsetX, offsetY);
+
+            var lineAxisY = new Line
+            {
+                X1 = 0,
+                Y1 = 0 - diffY,
+                X2 = 0,
+                Y2 = canvas.ActualHeight - diffY,
+                Stroke = new SolidColorBrush {Color = Colors.Red},
+                StrokeThickness = 1
+            };
+            canvas.Children.Add(lineAxisY);
+            
+            var lineAxisX = new Line
+            {
+                X1 = 0 - diffX,
+                Y1 = 0,
+                X2 = canvas.ActualWidth - diffX,
+                Y2 = 0,
+                Stroke = new SolidColorBrush {Color = Colors.Red},
+                StrokeThickness = 1
+            };
+            canvas.Children.Add(lineAxisX);
+
+            DrawGrid(canvas, diffX, diffY);
+        }
+
+        public static void Paint(Canvas canvas)
+        {
+            DrawGrid(canvas, 0, 0);
+        }
+
+        /// <summary>
+        /// 设置旋转角度和位置
+        /// </summary>
+        /// <param name="angle">偏转角度</param>
+        /// <param name="offsetX">X轴偏移位置</param>
+        /// <param name="offsetY">X轴偏移位置</param>
+        /// <returns></returns>
+        private static TransformGroup SetAngleXy(double angle, double offsetX, double offsetY)
+        {
+            var tfGroup = new TransformGroup();
+            var rt = new RotateTransform {Angle = angle, CenterX = offsetX / 2, CenterY = offsetY / 2};
+            tfGroup.Children.Add(rt);
+            return tfGroup;
+        }
+
+        private static void DrawGrid(Canvas canvas, double diffX, double diffY)
+        {
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
             double scaleX = 10;
-            double currentPosY = 0;
+            double currentPosY = 0 - diffY;
             currentPosY += scaleX;
-            while (currentPosY < canvas.ActualHeight)
+            while (currentPosY + diffY < canvas.ActualHeight)
             {
-                Line line = new Line
+                var lineRow = new Line
                 {
-                    X1 = 0,
+                    X1 = 0 - diffX,
                     Y1 = currentPosY,
-                    X2 = canvas.ActualWidth,
+                    X2 = canvas.ActualWidth - diffX,
                     Y2 = currentPosY,
                     Stroke = gridBrush,
                     StrokeThickness = 0.1
                 };
-                canvas.Children.Add(line);
+                canvas.Children.Add(lineRow);
                 
                 currentPosY += scaleX;
             }
             
             double scaleY = 10;
-            double currentPosX = 0;
+            double currentPosX = 0 - diffX;
             currentPosX += scaleY;
-            while (currentPosX < canvas.ActualWidth)
+            while (currentPosX + diffX < canvas.ActualWidth)
             {
-                Line line = new Line
+                var lineCol = new Line
                 {
                     X1 = currentPosX,
-                    Y1 = 0,
+                    Y1 = 0 - diffY,
                     X2 = currentPosX,
-                    Y2 = canvas.ActualHeight,
+                    Y2 = canvas.ActualHeight - diffY,
                     Stroke = gridBrush,
                     StrokeThickness = 0.1
                 };
-                canvas.Children.Add(line);
+                canvas.Children.Add(lineCol);
                 
                 currentPosX += scaleY;
             }
@@ -69,7 +122,7 @@ namespace DrawGrid
             while (cursor <= radius)
             {
                 var contour = Math.Sqrt(radius * radius - Math.Pow(cursor, 2));
-                Line aa = new Line
+                Line lineRowDown = new Line
                 {
                     X1 = centerX - contour,
                     Y1 = centerY + cursor,
@@ -78,9 +131,9 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                canvas.Children.Add(aa);
+                canvas.Children.Add(lineRowDown);
 
-                Line bb = new Line
+                Line lineRowUp = new Line
                 {
                     X1 = centerX - contour,
                     Y1 = centerY - cursor,
@@ -89,9 +142,9 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                canvas.Children.Add(bb);
+                canvas.Children.Add(lineRowUp);
 
-                Line cc = new Line
+                Line lineColLeft = new Line
                 {
                     X1 = centerX - cursor,
                     Y1 = centerY - contour,
@@ -100,9 +153,9 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                canvas.Children.Add(cc);
+                canvas.Children.Add(lineColLeft);
 
-                Line dd = new Line
+                Line lineColRight = new Line
                 {
                     X1 = centerX + cursor,
                     Y1 = centerY - contour,
@@ -111,7 +164,7 @@ namespace DrawGrid
                     Stroke = gridBrush,
                     StrokeThickness = 1
                 };
-                canvas.Children.Add(dd);
+                canvas.Children.Add(lineColRight);
 
                 cursor += step;
             }

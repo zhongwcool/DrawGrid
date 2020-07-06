@@ -32,6 +32,8 @@ namespace DrawGrid
             MyGrid.Children.Clear();
             GridTool.Draw(MyGrid);
             DrawPath(MyGrid);
+            MyGrid2.Children.Clear();
+            GridTool.Paint(MyGrid2);
         }
         
         private readonly Polyline _line = new Polyline();
@@ -39,10 +41,12 @@ namespace DrawGrid
         private readonly Random _random = new Random();
         private void ButtonPath_OnClick(object sender, RoutedEventArgs e)
         {
-            _collection.Add(new Point(_random.Next(1, (int)MyGrid.Width),_random.Next(1, (int)MyGrid.Height)));
+            _collection.Add(new Point(_random.Next(1, (int)MyGrid.Width) - MyGrid.Width/2,_random.Next(1, (int)MyGrid.Height) - 30));
             MyGrid.Children.Clear();
             GridTool.Draw(MyGrid);
             DrawPath(MyGrid);
+            MyGrid2.Children.Clear();
+            GridTool.Paint(MyGrid2);
         }
 
         private void DrawPath(Panel panel)
@@ -61,9 +65,9 @@ namespace DrawGrid
 
         private void InitData()
         {
+            _collection.Add(new Point(0,0));
             _collection.Add(new Point(20,20));
             _collection.Add(new Point(40,25));
-            _collection.Add(new Point(60,40));
         }
     }
 }
