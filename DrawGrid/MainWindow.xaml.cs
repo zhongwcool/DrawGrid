@@ -1,7 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DrawGrid.Annotations;
+using DrawGrid.Converter;
 
 namespace DrawGrid
 {
@@ -30,7 +29,7 @@ namespace DrawGrid
             };
             MyCircle.Background = brush;
         }
-        
+
         private void MainWindow_Resize(object sender, EventArgs e)
         {
             MyGrid.Children.Clear();
@@ -39,11 +38,12 @@ namespace DrawGrid
             MyGrid2.Children.Clear();
             GridTool.Paint(MyGrid2);
         }
-        
+
         private readonly Polyline _polyline = new Polyline();
         private readonly PointCollection _collection = new PointCollection();
         private readonly Random _random = new Random();
         private double _lastX = 0;
+
         public double LastX
         {
             get => _lastX;
@@ -53,6 +53,7 @@ namespace DrawGrid
                 OnPropertyChanged(nameof(LastX));
             }
         }
+
         private double _lastY = 25 / 5D;
 
         public double LastY
@@ -85,7 +86,7 @@ namespace DrawGrid
             panel.Children.Add(_polyline);
 
             var tipText = new TextBlock {FontSize = 10};
-            var textBinding = new Binding {Source = LastY, StringFormat = "{0}m"};
+            var textBinding = new Binding {Source = LastY, StringFormat = "{0}m", Converter = new Int2IntConverter()};
             tipText.SetBinding(TextBlock.TextProperty, textBinding);
             panel.Children.Add(tipText);
             var rotateTransform = new RotateTransform(180);
@@ -102,9 +103,9 @@ namespace DrawGrid
 
         private void InitData()
         {
-            _collection.Add(new Point(0,0));
-            _collection.Add(new Point(20 / 5D,20 / 5D));
-            _collection.Add(new Point(40 / 5D,25 / 5D));
+            _collection.Add(new Point(0, 0));
+            _collection.Add(new Point(20 / 5D, 20 / 5D));
+            _collection.Add(new Point(40 / 5D, 25 / 5D));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
