@@ -1,18 +1,22 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DrawGrid.Annotations;
 
 namespace DrawGrid
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class MainWindow : INotifyPropertyChanged
     {
         public MainWindow()
         {
@@ -40,7 +44,27 @@ namespace DrawGrid
         private readonly PointCollection _collection = new PointCollection();
         private readonly Random _random = new Random();
         private double _lastX = 0;
+        public double LastX
+        {
+            get => _lastX;
+            set
+            {
+                _lastX = value;
+                OnPropertyChanged(nameof(LastX));
+            }
+        }
         private double _lastY = 25 / 5D;
+
+        public double LastY
+        {
+            get => _lastY;
+            set
+            {
+                _lastY = value;
+                OnPropertyChanged(nameof(LastY));
+            }
+        }
+
         private void ButtonPath_OnClick(object sender, RoutedEventArgs e)
         {
             _lastY += _random.Next(1, 5);
@@ -59,6 +83,15 @@ namespace DrawGrid
             _polyline.Stroke = new SolidColorBrush(Colors.Black);
             _polyline.StrokeThickness = 1;
             panel.Children.Add(_polyline);
+
+            var tipText = new TextBlock {FontSize = 10};
+            var textBinding = new Binding {Source = LastY, StringFormat = "{0}m"};
+            tipText.SetBinding(TextBlock.TextProperty, textBinding);
+            panel.Children.Add(tipText);
+            var rotateTransform = new RotateTransform(180);
+            tipText.LayoutTransform = rotateTransform;
+            Canvas.SetLeft(tipText, LastX);
+            Canvas.SetTop(tipText, LastY);
         }
 
         private void ButtonDrawCircle_OnClick(object sender, RoutedEventArgs e)
@@ -70,8 +103,16 @@ namespace DrawGrid
         private void InitData()
         {
             _collection.Add(new Point(0,0));
-            _collection.Add(new Point((int) 20 / 5D,20 / 5D));
+            _collection.Add(new Point(20 / 5D,20 / 5D));
             _collection.Add(new Point(40 / 5D,25 / 5D));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
