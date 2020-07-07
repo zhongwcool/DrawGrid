@@ -15,6 +15,7 @@ namespace DrawGrid
             var offsetY = canvas.ActualHeight - diffY;
             canvas.RenderTransform = SetAngleXy(180, offsetX, offsetY);
 
+            //绘制Y轴
             var lineAxisY = new Line
             {
                 X1 = 0,
@@ -25,7 +26,7 @@ namespace DrawGrid
                 StrokeThickness = 1
             };
             canvas.Children.Add(lineAxisY);
-            
+            //绘制X轴
             var lineAxisX = new Line
             {
                 X1 = 0 - diffX,
@@ -36,7 +37,7 @@ namespace DrawGrid
                 StrokeThickness = 1
             };
             canvas.Children.Add(lineAxisX);
-
+            //绘制X轴、Y轴的标签
             var labelX = new TextBlock {Text = "x"};
             var labelY = new TextBlock {Text = "y"};
             var rotateTransform = new RotateTransform(180);

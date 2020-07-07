@@ -36,12 +36,16 @@ namespace DrawGrid
             GridTool.Paint(MyGrid2);
         }
         
-        private readonly Polyline _line = new Polyline();
+        private readonly Polyline _polyline = new Polyline();
         private readonly PointCollection _collection = new PointCollection();
         private readonly Random _random = new Random();
+        private double _lastX = 0;
+        private double _lastY = 25 / 5D;
         private void ButtonPath_OnClick(object sender, RoutedEventArgs e)
         {
-            _collection.Add(new Point(_random.Next(1, (int)MyGrid.Width) - MyGrid.Width/2,_random.Next(1, (int)MyGrid.Height) - 30));
+            _lastY += _random.Next(1, 5);
+            _lastX = _random.Next(-2, 2);
+            _collection.Add(new Point(_lastX, _lastY));
             MyGrid.Children.Clear();
             GridTool.Draw(MyGrid);
             DrawPath(MyGrid);
@@ -51,10 +55,10 @@ namespace DrawGrid
 
         private void DrawPath(Panel panel)
         {
-            _line.Points = _collection;
-            _line.Stroke = new SolidColorBrush(Colors.Black);
-            _line.StrokeThickness = 1;
-            panel.Children.Add(_line);
+            _polyline.Points = _collection;
+            _polyline.Stroke = new SolidColorBrush(Colors.Black);
+            _polyline.StrokeThickness = 1;
+            panel.Children.Add(_polyline);
         }
 
         private void ButtonDrawCircle_OnClick(object sender, RoutedEventArgs e)
@@ -66,8 +70,8 @@ namespace DrawGrid
         private void InitData()
         {
             _collection.Add(new Point(0,0));
-            _collection.Add(new Point(20,20));
-            _collection.Add(new Point(40,25));
+            _collection.Add(new Point((int) 20 / 5D,20 / 5D));
+            _collection.Add(new Point(40 / 5D,25 / 5D));
         }
     }
 }
