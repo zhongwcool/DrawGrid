@@ -1,26 +1,27 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using DrawGrid.Annotations;
 using DrawGrid.Converter;
+using DrawGrid.Data;
+using DrawGrid.Model;
+using DrawGrid.ViewModel;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace DrawGrid
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : INotifyPropertyChanged
+    public partial class MainWindow
     {
+        private readonly Polyline _polyline = new Polyline();
+
         public MainWindow()
         {
             InitializeComponent();
-            InitData();
             SizeChanged += MainWindow_Resize;
 
             var brush = new ImageBrush
@@ -28,6 +29,25 @@ namespace DrawGrid
                 ImageSource = new BitmapImage(new Uri("pack://application:,,,/Image/20141008063846.jpg"))
             };
             MyCircle.Background = brush;
+
+            Messenger.Default.Register<Message>(this, MessageToken.MainPoster, OnMessageHandle);
+        }
+
+        private void OnMessageHandle(Message msg)
+        {
+            switch (msg.Key)
+            {
+                case Message.Main.DrawCircle:
+                {
+                    OnDrawCircle(msg.Msg);
+                }
+                    break;
+                case Message.Main.GeneratePoint:
+                {
+                    OnDrawPath(msg.Msg);
+                }
+                    break;
+            }
         }
 
         private void MainWindow_Resize(object sender, EventArgs e)
@@ -35,85 +55,44 @@ namespace DrawGrid
             MyGrid.Children.Clear();
             GridTool.Draw(MyGrid);
             DrawPath(MyGrid);
-            MyGrid2.Children.Clear();
-            GridTool.Paint(MyGrid2);
-        }
-
-        private readonly Polyline _polyline = new Polyline();
-        private readonly PointCollection _collection = new PointCollection();
-        private readonly Random _random = new Random();
-        private double _lastX = 0;
-
-        public double LastX
-        {
-            get => _lastX;
-            set
-            {
-                _lastX = value;
-                OnPropertyChanged(nameof(LastX));
-            }
-        }
-
-        private double _lastY = 25 / 5D;
-
-        public double LastY
-        {
-            get => _lastY;
-            set
-            {
-                _lastY = value;
-                OnPropertyChanged(nameof(LastY));
-            }
-        }
-
-        private void ButtonPath_OnClick(object sender, RoutedEventArgs e)
-        {
-            _lastY += _random.Next(1, 5);
-            _lastX = _random.Next(-2, 2);
-            _collection.Add(new Point(_lastX, _lastY));
-            MyGrid.Children.Clear();
-            GridTool.Draw(MyGrid);
-            DrawPath(MyGrid);
-            MyGrid2.Children.Clear();
-            GridTool.Paint(MyGrid2);
+            MyCircle.Children.Clear();
+            GridTool.Paint(MyCircle);
         }
 
         private void DrawPath(Panel panel)
         {
-            _polyline.Points = _collection;
+            _polyline.Points = ViewModelLocator.Instance.Main.Collection;
             _polyline.Stroke = new SolidColorBrush(Colors.Black);
             _polyline.StrokeThickness = 1;
             panel.Children.Add(_polyline);
 
             var tipText = new TextBlock {FontSize = 10};
-            var textBinding = new Binding {Source = LastY, StringFormat = "{0}m", Converter = new Int2IntConverter()};
+            var textBinding = new Binding
+            {
+                Source = ViewModelLocator.Instance.Main.LastY, StringFormat = "{0}m",
+                Converter = new Analog2RealConverter()
+            };
             tipText.SetBinding(TextBlock.TextProperty, textBinding);
             panel.Children.Add(tipText);
             var rotateTransform = new RotateTransform(180);
             tipText.LayoutTransform = rotateTransform;
-            Canvas.SetLeft(tipText, LastX);
-            Canvas.SetTop(tipText, LastY);
+            Canvas.SetLeft(tipText, ViewModelLocator.Instance.Main.LastX);
+            Canvas.SetTop(tipText, ViewModelLocator.Instance.Main.LastY);
         }
 
-        private void ButtonDrawCircle_OnClick(object sender, RoutedEventArgs e)
+        private void OnDrawCircle(string msg, string extra = "")
         {
             MyCircle.Children.Clear();
             GridTool.DrawCircle(MyCircle);
         }
 
-        private void InitData()
+        private void OnDrawPath(string msg, string extra = "")
         {
-            _collection.Add(new Point(0, 0));
-            _collection.Add(new Point(20 / 5D, 20 / 5D));
-            _collection.Add(new Point(40 / 5D, 25 / 5D));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            MyGrid.Children.Clear();
+            GridTool.Draw(MyGrid);
+            DrawPath(MyGrid);
+            MyCircle.Children.Clear();
+            GridTool.Paint(MyCircle);
         }
     }
 }

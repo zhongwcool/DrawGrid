@@ -9,7 +9,7 @@ namespace DrawGrid
     {
         public static void Draw(Canvas canvas)
         {
-            var diffX = canvas.ActualWidth/2;
+            var diffX = canvas.ActualWidth / 2;
             var offsetX = canvas.ActualWidth - diffX;
             var diffY = 10;
             var offsetY = canvas.ActualHeight - diffY;
@@ -92,10 +92,10 @@ namespace DrawGrid
                     StrokeThickness = 0.1
                 };
                 canvas.Children.Add(lineRow);
-                
+
                 currentPosY += scaleX;
             }
-            
+
             double scaleY = 10;
             double currentPosX = 0 - diffX;
             currentPosX += scaleY;
@@ -111,17 +111,17 @@ namespace DrawGrid
                     StrokeThickness = 0.1
                 };
                 canvas.Children.Add(lineCol);
-                
+
                 currentPosX += scaleY;
             }
         }
 
         public static void DrawCircle(Canvas canvas)
-        { 
+        {
             var random = new Random();
-            var centerX = random.Next(1, (int)canvas.ActualWidth)/2;
-            var centerY = random.Next(1, (int)canvas.ActualHeight)/2;
-            double step = 20;
+            var centerX = random.Next(1, (int) canvas.ActualWidth) / 2;
+            var centerY = random.Next(1, (int) canvas.ActualHeight) / 2;
+            double step = 10;
             double radius = random.Next(20, 100);
             double cursor = 0;
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
@@ -142,7 +142,7 @@ namespace DrawGrid
                     X2 = centerX + contour,
                     Y2 = centerY + cursor,
                     Stroke = gridBrush,
-                    StrokeThickness = 1
+                    StrokeThickness = 0.1
                 };
                 canvas.Children.Add(lineRowDown);
 
@@ -153,7 +153,7 @@ namespace DrawGrid
                     X2 = centerX + contour,
                     Y2 = centerY - cursor,
                     Stroke = gridBrush,
-                    StrokeThickness = 1
+                    StrokeThickness = 0.1
                 };
                 canvas.Children.Add(lineRowUp);
 
@@ -164,7 +164,7 @@ namespace DrawGrid
                     X2 = centerX - cursor,
                     Y2 = centerY + contour,
                     Stroke = gridBrush,
-                    StrokeThickness = 1
+                    StrokeThickness = 0.1
                 };
                 canvas.Children.Add(lineColLeft);
 
@@ -175,7 +175,7 @@ namespace DrawGrid
                     X2 = centerX + cursor,
                     Y2 = centerY + contour,
                     Stroke = gridBrush,
-                    StrokeThickness = 1
+                    StrokeThickness = 0.1
                 };
                 canvas.Children.Add(lineColRight);
 
