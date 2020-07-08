@@ -2,7 +2,7 @@
 {
     public class Message
     {
-        public Message(string key, string msg = "", string extra = "")
+        public Message(string key, string msg = "", object extra = null)
         {
             Key = key;
             Msg = msg;
@@ -10,9 +10,8 @@
         }
 
         public string Key { get; }
-
         public string Msg { get; }
-        public string Extra { get; }
+        public object Extra { get; }
 
         public static class Main
         {

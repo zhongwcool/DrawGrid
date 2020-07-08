@@ -80,13 +80,13 @@ namespace DrawGrid
             Canvas.SetTop(tipText, ViewModelLocator.Instance.Main.LastY);
         }
 
-        private void OnDrawCircle(string msg, string extra = "")
+        private void OnDrawCircle(string msg, object extra = null)
         {
             MyCircle.Children.Clear();
             GridTool.DrawCircle(MyCircle);
         }
 
-        private void OnDrawPath(string msg, string extra = "")
+        private void OnDrawPath(string msg, object extra = null)
         {
             MyGrid.Children.Clear();
             GridTool.Draw(MyGrid);
