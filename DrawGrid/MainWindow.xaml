@@ -9,15 +9,25 @@
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}" />
     </Window.DataContext>
-    <Grid Background="Gray">
+    <Grid Background="Black">
         <Canvas x:Name="MyCircle" />
-        <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="5"
+        <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="1" CornerRadius="1" Margin="10"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="#66FFFFFF">
-            <Canvas x:Name="MyGrid" Width="100" Height="200" />
+            <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <WrapPanel.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#4FFF" Offset="0" />
+                        <GradientStop Color="Transparent" Offset="1" />
+                    </LinearGradientBrush>
+                </WrapPanel.Background>
+
+                <Canvas x:Name="MyGrid" Width="150" Height="250" />
+            </WrapPanel>
             <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="0" Opacity="1" />
+                <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="10" Opacity="1" />
             </Border.Effect>
         </Border>
+
         <WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <Button Command="{Binding CommandDrawPath}">左手轨迹</Button>
             <Button Command="{Binding CommandDrawCircle}">右手画圆</Button>
