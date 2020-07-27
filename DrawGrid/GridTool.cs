@@ -11,7 +11,7 @@ namespace DrawGrid
         {
             var diffX = canvas.ActualWidth / 2;
             var offsetX = canvas.ActualWidth - diffX;
-            var diffY = 10;
+            var diffY = 50;
             var offsetY = canvas.ActualHeight - diffY;
             canvas.RenderTransform = SetAngleXy(180, offsetX, offsetY);
 
@@ -38,8 +38,8 @@ namespace DrawGrid
             };
             canvas.Children.Add(lineAxisX);
             //绘制X轴、Y轴的标签
-            var labelX = new TextBlock {Text = "x"};
-            var labelY = new TextBlock {Text = "y"};
+            var labelX = new TextBlock {Text = "x", Foreground = Brushes.White};
+            var labelY = new TextBlock {Text = "y", Foreground = Brushes.White};
             var rotateTransform = new RotateTransform(180);
             labelX.LayoutTransform = rotateTransform;
             labelY.LayoutTransform = rotateTransform;
@@ -78,7 +78,8 @@ namespace DrawGrid
             var gridBrush = new SolidColorBrush {Color = Colors.Red};
 
             double scaleX = 10;
-            double currentPosY = 0 - diffY;
+            //画 y>0 的部分
+            double currentPosY = 0;
             currentPosY += scaleX;
             while (currentPosY + diffY < canvas.ActualHeight)
             {
@@ -96,8 +97,27 @@ namespace DrawGrid
                 currentPosY += scaleX;
             }
 
+            //画 y<0 的部分
+            currentPosY = 0;
+            currentPosY -= scaleX;
+            while (currentPosY > 0 - diffY)
+            {
+                var lineRow = new Line
+                {
+                    X1 = 0 - diffX,
+                    Y1 = currentPosY,
+                    X2 = canvas.ActualWidth - diffX,
+                    Y2 = currentPosY,
+                    Stroke = gridBrush,
+                    StrokeThickness = 0.1
+                };
+                canvas.Children.Add(lineRow);
+
+                currentPosY -= scaleX;
+            }
+
             double scaleY = 10;
-            double currentPosX = 0 - diffX;
+            double currentPosX = 0;
             currentPosX += scaleY;
             while (currentPosX + diffX < canvas.ActualWidth)
             {
@@ -113,6 +133,24 @@ namespace DrawGrid
                 canvas.Children.Add(lineCol);
 
                 currentPosX += scaleY;
+            }
+
+            currentPosX = 0;
+            currentPosX -= scaleY;
+            while (currentPosX > 0 - diffX)
+            {
+                var lineCol = new Line
+                {
+                    X1 = currentPosX,
+                    Y1 = 0 - diffY,
+                    X2 = currentPosX,
+                    Y2 = canvas.ActualHeight - diffY,
+                    Stroke = gridBrush,
+                    StrokeThickness = 0.1
+                };
+                canvas.Children.Add(lineCol);
+
+                currentPosX -= scaleY;
             }
         }
 
