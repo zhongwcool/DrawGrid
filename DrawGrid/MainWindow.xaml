@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DrawGrid"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1200">
+        Title="MainWindow" Height="700" Width="1200"
+        KeyDown="MainWindows_Keydown">
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}" />
     </Window.DataContext>
@@ -30,6 +31,7 @@
 
         <WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <Button Command="{Binding CommandDrawPath}">左手轨迹</Button>
+            <Button Click="ButtonFullScreen_OnClick">全屏</Button>
             <Button Command="{Binding CommandDrawCircle}">右手画圆</Button>
         </WrapPanel>
     </Grid>
