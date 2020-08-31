@@ -17,6 +17,8 @@
         {
             public const string GeneratePoint = nameof(GeneratePoint);
             public const string DrawCircle = nameof(DrawCircle);
+            public const string InstantAdd = nameof(InstantAdd);
+            public const string InstantRemove = nameof(InstantRemove);
         }
     }
 }

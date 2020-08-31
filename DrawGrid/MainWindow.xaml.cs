@@ -4,13 +4,17 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using DrawGrid.Converter;
 using DrawGrid.Data;
 using DrawGrid.Model;
+using DrawGrid.View;
 using DrawGrid.ViewModel;
 using GalaSoft.MvvmLight.Messaging;
+using WpfAnimatedGif;
 
 namespace DrawGrid
 {
@@ -32,6 +36,10 @@ namespace DrawGrid
             };
             MyCircle.Background = brush;
 
+            var gif = new BitmapImage(new Uri("pack://application:,,,/Image/IMG_7189.gif"));
+            ImageBehavior.SetAnimatedSource(MyImage, gif);
+            ImageBehavior.SetRepeatBehavior(MyImage, RepeatBehavior.Forever);
+
             Messenger.Default.Register<Message>(this, MessageToken.MainPoster, OnMessageHandle);
         }
 
@@ -47,6 +55,16 @@ namespace DrawGrid
                 case Message.Main.GeneratePoint:
                 {
                     OnDrawPath(msg.Msg);
+                }
+                    break;
+                case Message.Main.InstantAdd:
+                {
+                    OnInstantAdd(msg.Msg);
+                }
+                    break;
+                case Message.Main.InstantRemove:
+                {
+                    OnInstantRemove(msg.Msg);
                 }
                     break;
             }
@@ -86,6 +104,58 @@ namespace DrawGrid
         {
             MyCircle.Children.Clear();
             GridTool.DrawCircle(MyCircle);
+        }
+
+        private PointText _point;
+        private bool _hasAdded;
+        private DispatcherTimer _tipsTimer;
+
+        private void OnInstantAdd(string msg, object extra = null)
+        {
+            if (null == _point)
+            {
+                _point = new PointText
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center
+                };
+            }
+
+            if (!_hasAdded)
+            {
+                RootGrid.Children.Add(_point);
+                _hasAdded = true;
+
+                if (null == _tipsTimer)
+                {
+                    _tipsTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 0, 5)};
+                    _tipsTimer.Tick += (sender, args) =>
+                    {
+                        if (null != _point && _hasAdded)
+                        {
+                            RootGrid.Children.Remove(_point);
+                            _hasAdded = false;
+                        }
+
+                        _tipsTimer.Stop();
+                    };
+                }
+
+                _tipsTimer.Start();
+            }
+            else
+            {
+                _tipsTimer.Stop();
+                _tipsTimer.Start();
+            }
+        }
+
+        private void OnInstantRemove(string msg, object extra = null)
+        {
+            if (null != _point && _hasAdded)
+            {
+                RootGrid.Children.Remove(_point);
+                _hasAdded = false;
+            }
         }
 
         private void OnDrawPath(string msg, object extra = null)

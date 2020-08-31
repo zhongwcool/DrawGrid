@@ -64,6 +64,10 @@
         <Reference Include="WindowsBase"/>
         <Reference Include="PresentationCore"/>
         <Reference Include="PresentationFramework"/>
+        <Reference Include="WpfAnimatedGif, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9e7cd3b544a090dc">
+            <HintPath>..\packages\WpfAnimatedGif.2.0.0\lib\net40\WpfAnimatedGif.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <ApplicationDefinition Include="App.xaml">
@@ -74,6 +78,9 @@
         <Compile Include="Model\Message.cs"/>
         <Compile Include="ViewModel\MainViewModel.cs"/>
         <Compile Include="ViewModel\ViewModelLocator.cs"/>
+        <Compile Include="View\PointText.xaml.cs">
+            <DependentUpon>PointText.xaml</DependentUpon>
+        </Compile>
         <Page Include="MainWindow.xaml">
             <Generator>MSBuild:Compile</Generator>
             <SubType>Designer</SubType>
@@ -88,6 +95,7 @@
             <DependentUpon>MainWindow.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
+        <Page Include="View\PointText.xaml"/>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Properties\Annotations.cs" />
@@ -105,11 +113,17 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <None Include="App.config" />
-        <None Include="packages.config" />
+        <None Include="App.config"/>
+        <None Include="packages.config"/>
     </ItemGroup>
     <ItemGroup>
-      <Resource Include="Image\20141008063846.jpg" />
+        <Resource Include="Image\20141008063846.jpg"/>
     </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <ItemGroup>
+        <Resource Include="Image\20141008063849.png"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Resource Include="Image\IMG_7189.gif"/>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
 </Project>

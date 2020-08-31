@@ -93,5 +93,19 @@ namespace DrawGrid.ViewModel
         {
             Messenger.Default.Send(new Message(Message.Main.DrawCircle), MessageToken.MainPoster);
         }
+
+        public RelayCommand CommandInstantAdd => new Lazy<RelayCommand>(() =>
+            new RelayCommand(() =>
+            {
+                Messenger.Default.Send(new Message(Message.Main.InstantAdd), MessageToken.MainPoster);
+            })
+        ).Value;
+
+        public RelayCommand CommandInstantRemove => new Lazy<RelayCommand>(() =>
+            new RelayCommand(() =>
+            {
+                Messenger.Default.Send(new Message(Message.Main.InstantRemove), MessageToken.MainPoster);
+            })
+        ).Value;
     }
 }

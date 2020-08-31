@@ -5,16 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DrawGrid"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="700" Width="1200"
         KeyDown="MainWindows_Keydown">
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}" />
     </Window.DataContext>
-    <Grid Background="Black">
+    <Grid Background="Black" x:Name="RootGrid">
         <Canvas x:Name="MyCircle" />
         <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="1" CornerRadius="1" Margin="10"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="#66FFFFFF">
-            <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <WrapPanel>
                 <WrapPanel.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                         <GradientStop Color="#4FFF" Offset="0" />
@@ -28,11 +29,30 @@
                 <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="10" Opacity="1" />
             </Border.Effect>
         </Border>
+        
+        <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="1" CornerRadius="1" Margin="10"
+                HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="#66FFFFFF">
+            <WrapPanel>
+                <WrapPanel.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#4FFF" Offset="0" />
+                        <GradientStop Color="Transparent" Offset="1" />
+                    </LinearGradientBrush>
+                </WrapPanel.Background>
+
+                <Image x:Name="MyImage" Width="200" Height="200" Stretch="UniformToFill"/>
+            </WrapPanel>
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="10" Opacity="1" />
+            </Border.Effect>
+        </Border>
 
         <WrapPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <Button Command="{Binding CommandDrawPath}">左手轨迹</Button>
             <Button Click="ButtonFullScreen_OnClick">全屏</Button>
             <Button Command="{Binding CommandDrawCircle}">右手画圆</Button>
+            <Button Command="{Binding CommandInstantAdd}">动态添加</Button>
+            <Button Command="{Binding CommandInstantRemove}">动态删除</Button>
         </WrapPanel>
     </Grid>
 </Window>
