@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:DrawGrid"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="700" Width="1200"
-        KeyDown="MainWindows_Keydown">
+        Title="MainWindow" Height="700" Width="1200" >
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}" />
     </Window.DataContext>

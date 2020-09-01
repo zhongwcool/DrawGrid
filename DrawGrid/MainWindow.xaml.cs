@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -30,6 +32,8 @@ namespace DrawGrid
             InitializeComponent();
             SizeChanged += MainWindow_Resize;
 
+            SetHook();
+
             var brush = new ImageBrush
             {
                 ImageSource = new BitmapImage(new Uri("pack://application:,,,/Image/20141008063846.jpg"))
@@ -41,6 +45,12 @@ namespace DrawGrid
             ImageBehavior.SetRepeatBehavior(MyImage, RepeatBehavior.Forever);
 
             Messenger.Default.Register<Message>(this, MessageToken.MainPoster, OnMessageHandle);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            UnHook();
         }
 
         private void OnMessageHandle(Message msg)
@@ -169,25 +179,146 @@ namespace DrawGrid
 
         private void ButtonFullScreen_OnClick(object sender, RoutedEventArgs e)
         {
-            this.WindowStyle = WindowStyle.None;
-            this.WindowState = WindowState.Maximized;
-            this.ResizeMode = ResizeMode.NoResize;
-            this.Topmost = true;
+            WindowStyle = WindowStyle.None;
+            WindowState = WindowState.Maximized;
+            ResizeMode = ResizeMode.NoResize;
+            Topmost = true;
         }
 
-        private void MainWindows_Keydown(object sender, KeyEventArgs e)
+        private void Win32_Keydown(Key key)
         {
-            switch (e.Key)
+            switch (key)
             {
                 case Key.Escape:
                 {
-                    this.WindowState = WindowState.Normal;
-                    this.WindowStyle = WindowStyle.SingleBorderWindow;
-                    this.ResizeMode = ResizeMode.CanResize;
-                    this.Topmost = false;
+                    WindowState = WindowState.Normal;
+                    WindowStyle = WindowStyle.SingleBorderWindow;
+                    ResizeMode = ResizeMode.CanResize;
+                    Topmost = false;
                 }
                     break;
             }
         }
+
+        #region 键盘
+
+        /// <summary>
+        ///     声明回调函数委托
+        /// </summary>
+        /// <param name="nCode"></param>
+        /// <param name="wParam"></param>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
+        public delegate int HookProc(int nCode, int wParam, IntPtr lParam);
+
+        public const int WM_KEYDOWN = 0x100;
+
+        public const int WM_KEYUP = 0x101;
+
+        public const int WM_SYSKEYDOWN = 0x104;
+
+        public const int WM_SYSKEYUP = 0x105;
+
+        public const int WH_KEYBOARD_LL = 13;
+
+        //安装钩子的函数 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern int SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hInstance, int threadId);
+
+        //卸下钩子的函数 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern bool UnhookWindowsHookEx(int idHook);
+
+        //下一个钩挂的函数 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern int CallNextHookEx(int idHook, int nCode, int wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        //声明键盘钩子的封送结构类型   
+        [StructLayout(LayoutKind.Sequential)]
+        public class KeyboardHookStruct
+        {
+            public int vkCode; //表示一个在1到254间的虚似键盘码   
+            public int scanCode; //表示硬件扫描码   
+            public int flags;
+            public int time;
+            public int dwExtraInfo;
+        }
+
+        /// <summary>
+        ///     键盘钩子句柄
+        /// </summary>
+        private int _hKeyboardHook;
+
+        private HookProc _keyboardHookDelegate;
+
+        /// <summary>
+        ///     安装键盘钩子
+        /// </summary>
+        private void SetHook()
+        {
+            _keyboardHookDelegate = KeyboardHookProc;
+            var cModule = Process.GetCurrentProcess().MainModule;
+            if (null == cModule) return;
+            var moduleHandle = GetModuleHandle(cModule.ModuleName);
+            _hKeyboardHook =
+                SetWindowsHookEx(WH_KEYBOARD_LL, _keyboardHookDelegate, moduleHandle, 0);
+        }
+
+        /// <summary>
+        ///     卸载键盘钩子
+        /// </summary>
+        private void UnHook()
+        {
+            var retKeyboard = true;
+
+            if (_hKeyboardHook != 0)
+            {
+                retKeyboard = UnhookWindowsHookEx(_hKeyboardHook);
+                _hKeyboardHook = 0;
+            }
+
+            //如果卸下钩子失败   
+            if (!retKeyboard) throw new Exception("卸下钩子失败！");
+        }
+
+        /// <summary>
+        ///     获取键盘消息
+        /// </summary>
+        /// <param name="nCode"></param>
+        /// <param name="wParam"></param>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
+        private int KeyboardHookProc(int nCode, int wParam, IntPtr lParam)
+        {
+            // 如果该消息被丢弃（nCode<0
+            if (nCode < 0) return CallNextHookEx(_hKeyboardHook, nCode, wParam, lParam);
+
+            KeyboardHookStruct keyboardHookStruct =
+                (KeyboardHookStruct) Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
+            Key key = KeyInterop.KeyFromVirtualKey(keyboardHookStruct.vkCode);
+
+            switch (wParam)
+            {
+                case WM_KEYDOWN:
+                case WM_SYSKEYDOWN:
+                    //WM_KEYDOWN和WM_SYSKEYDOWN消息，将会引发OnKeyDownEvent事件
+                    // 此处触发键盘按下事件
+                    Win32_Keydown(key);
+                    break;
+                case WM_KEYUP:
+                case WM_SYSKEYUP:
+                    //WM_KEYUP和WM_SYSKEYUP消息，将引发OnKeyUpEvent事件
+                    // 此处触发键盘抬起事件
+                    //_onKeyUp?.Invoke(key);
+                    break;
+            }
+
+            return CallNextHookEx(_hKeyboardHook, nCode, wParam, lParam);
+        }
+
+        #endregion
     }
 }
