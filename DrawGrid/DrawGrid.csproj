@@ -75,6 +75,8 @@
             <SubType>Designer</SubType>
         </ApplicationDefinition>
         <Compile Include="Data\MessageToken.cs"/>
+        <Compile Include="Helper\Win32Helper.cs"/>
+        <Compile Include="Keyboard\KeyboardHook.cs"/>
         <Compile Include="Model\Message.cs"/>
         <Compile Include="ViewModel\MainViewModel.cs"/>
         <Compile Include="ViewModel\ViewModelLocator.cs"/>
