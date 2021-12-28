@@ -11,12 +11,12 @@ using System.Windows.Threading;
 using DrawGrid.Converter;
 using DrawGrid.Keyboard;
 using DrawGrid.Model;
-using DrawGrid.View;
+using DrawGrid.Tool;
 using DrawGrid.ViewModel;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using WpfAnimatedGif;
 
-namespace DrawGrid
+namespace DrawGrid.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,13 +25,13 @@ namespace DrawGrid
     {
         private readonly Polyline _polyline = new Polyline();
         private readonly KeyboardHook _keyboardHook;
-        private readonly MainViewModel context;
+        private readonly MainViewModel _context;
 
         public MainWindow()
         {
             InitializeComponent();
-            context = new MainViewModel();
-            DataContext = context;
+            _context = new MainViewModel();
+            DataContext = _context;
             SizeChanged += MainWindow_Resize;
 
             _keyboardHook = new KeyboardHook();
@@ -95,7 +95,7 @@ namespace DrawGrid
 
         private void DrawPath(Panel panel)
         {
-            _polyline.Points = context.Collection;
+            _polyline.Points = _context.Collection;
             _polyline.Stroke = new SolidColorBrush(Colors.Black);
             _polyline.StrokeThickness = 1;
             panel.Children.Add(_polyline);
@@ -103,15 +103,15 @@ namespace DrawGrid
             var tipText = new TextBlock { FontSize = 10 };
             var textBinding = new Binding
             {
-                Source = context.LastY, StringFormat = "{0}m",
+                Source = _context.LastY, StringFormat = "{0}m",
                 Converter = new Analog2RealConverter()
             };
             tipText.SetBinding(TextBlock.TextProperty, textBinding);
             panel.Children.Add(tipText);
             var rotateTransform = new RotateTransform(180);
             tipText.LayoutTransform = rotateTransform;
-            Canvas.SetLeft(tipText, context.LastX);
-            Canvas.SetTop(tipText, context.LastY);
+            Canvas.SetLeft(tipText, _context.LastX);
+            Canvas.SetTop(tipText, _context.LastY);
         }
 
         private void OnDrawCircle(string msg, object extra = null)

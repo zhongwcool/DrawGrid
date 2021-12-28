@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace DrawGrid
+namespace DrawGrid.Tool
 {
     public static class GridTool
     {
@@ -22,7 +22,7 @@ namespace DrawGrid
                 Y1 = 0 - diffY,
                 X2 = 0,
                 Y2 = canvas.ActualHeight - diffY,
-                Stroke = new SolidColorBrush {Color = Colors.Red},
+                Stroke = new SolidColorBrush { Color = Colors.Red },
                 StrokeThickness = 1
             };
             canvas.Children.Add(lineAxisY);
@@ -33,13 +33,13 @@ namespace DrawGrid
                 Y1 = 0,
                 X2 = canvas.ActualWidth - diffX,
                 Y2 = 0,
-                Stroke = new SolidColorBrush {Color = Colors.Red},
+                Stroke = new SolidColorBrush { Color = Colors.Red },
                 StrokeThickness = 1
             };
             canvas.Children.Add(lineAxisX);
             //绘制X轴、Y轴的标签
-            var labelX = new TextBlock {Text = "x", Foreground = Brushes.White};
-            var labelY = new TextBlock {Text = "y", Foreground = Brushes.White};
+            var labelX = new TextBlock { Text = "x", Foreground = Brushes.White };
+            var labelY = new TextBlock { Text = "y", Foreground = Brushes.White };
             var rotateTransform = new RotateTransform(180);
             labelX.LayoutTransform = rotateTransform;
             labelY.LayoutTransform = rotateTransform;
@@ -68,14 +68,14 @@ namespace DrawGrid
         private static TransformGroup SetAngleXy(double angle, double offsetX, double offsetY)
         {
             var tfGroup = new TransformGroup();
-            var rt = new RotateTransform {Angle = angle, CenterX = offsetX / 2, CenterY = offsetY / 2};
+            var rt = new RotateTransform { Angle = angle, CenterX = offsetX / 2, CenterY = offsetY / 2 };
             tfGroup.Children.Add(rt);
             return tfGroup;
         }
 
         private static void DrawGrid(Canvas canvas, double diffX, double diffY)
         {
-            var gridBrush = new SolidColorBrush {Color = Colors.Red};
+            var gridBrush = new SolidColorBrush { Color = Colors.Red };
 
             double scaleX = 10;
             //画 y>0 的部分
@@ -157,15 +157,15 @@ namespace DrawGrid
         public static void DrawCircle(Canvas canvas)
         {
             var random = new Random();
-            var centerX = random.Next(1, (int) canvas.ActualWidth) / 2;
-            var centerY = random.Next(1, (int) canvas.ActualHeight) / 2;
+            var centerX = random.Next(1, (int)canvas.ActualWidth) / 2;
+            var centerY = random.Next(1, (int)canvas.ActualHeight) / 2;
             double step = 10;
             double radius = random.Next(20, 100);
             double cursor = 0;
-            var gridBrush = new SolidColorBrush {Color = Colors.Red};
+            var gridBrush = new SolidColorBrush { Color = Colors.Red };
 
             // 画一个圆边
-            var myEllipse = new Ellipse {Stroke = Brushes.Black, Width = radius * 2, Height = radius * 2};
+            var myEllipse = new Ellipse { Stroke = Brushes.Black, Width = radius * 2, Height = radius * 2 };
             Canvas.SetLeft(myEllipse, centerX - radius);
             Canvas.SetTop(myEllipse, centerY - radius);
             canvas.Children.Add(myEllipse);
