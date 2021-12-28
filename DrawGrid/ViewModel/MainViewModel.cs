@@ -1,27 +1,15 @@
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
-using DrawGrid.Data;
 using DrawGrid.Model;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace DrawGrid.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ObservableObject
     {
         public readonly PointCollection Collection = new PointCollection();
 
@@ -30,9 +18,9 @@ namespace DrawGrid.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            if (IsInDesignMode)
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
-                InitData();
+                DummyData();
             }
             else
             {
@@ -40,7 +28,7 @@ namespace DrawGrid.ViewModel
             }
         }
 
-        private void InitData()
+        private void DummyData()
         {
             Collection.Add(new Point(0, 0));
             Collection.Add(new Point(20 / 5D, 20 / 5D));
@@ -52,11 +40,7 @@ namespace DrawGrid.ViewModel
         public double LastX
         {
             get => _lastX;
-            set
-            {
-                _lastX = value;
-                RaisePropertyChanged(nameof(LastX));
-            }
+            set => SetProperty(ref _lastX, value);
         }
 
         private double _lastY = 25 / 5D;
@@ -64,11 +48,7 @@ namespace DrawGrid.ViewModel
         public double LastY
         {
             get => _lastY;
-            set
-            {
-                _lastY = value;
-                RaisePropertyChanged(nameof(LastY));
-            }
+            set => SetProperty(ref _lastY, value);
         }
 
         public RelayCommand CommandDrawPath => new Lazy<RelayCommand>(() =>
@@ -82,7 +62,7 @@ namespace DrawGrid.ViewModel
             _lastY += _random.Next(1, 5);
             _lastX = _random.Next(-2, 2);
             Collection.Add(new Point(_lastX, _lastY));
-            Messenger.Default.Send(new Message(Message.Main.GeneratePoint), MessageToken.MainPoster);
+            WeakReferenceMessenger.Default.Send(new Message(Message.GeneratePoint));
         }
 
         public RelayCommand CommandDrawCircle => new Lazy<RelayCommand>(() =>
@@ -91,21 +71,15 @@ namespace DrawGrid.ViewModel
 
         private void HandleDrawCircle()
         {
-            Messenger.Default.Send(new Message(Message.Main.DrawCircle), MessageToken.MainPoster);
+            WeakReferenceMessenger.Default.Send(new Message(Message.DrawCircle));
         }
 
         public RelayCommand CommandInstantAdd => new Lazy<RelayCommand>(() =>
-            new RelayCommand(() =>
-            {
-                Messenger.Default.Send(new Message(Message.Main.InstantAdd), MessageToken.MainPoster);
-            })
+            new RelayCommand(() => { WeakReferenceMessenger.Default.Send(new Message(Message.InstantAdd)); })
         ).Value;
 
         public RelayCommand CommandInstantRemove => new Lazy<RelayCommand>(() =>
-            new RelayCommand(() =>
-            {
-                Messenger.Default.Send(new Message(Message.Main.InstantRemove), MessageToken.MainPoster);
-            })
+            new RelayCommand(() => { WeakReferenceMessenger.Default.Send(new Message(Message.InstantRemove)); })
         ).Value;
     }
 }

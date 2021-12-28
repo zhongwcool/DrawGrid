@@ -3,13 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DrawGrid"
+        xmlns:vm="clr-namespace:DrawGrid.ViewModel"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=True}"
         WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="700" Width="1200" >
-    <Window.DataContext>
-        <Binding Path="Main" Source="{StaticResource Locator}" />
-    </Window.DataContext>
     <Grid Background="Black" x:Name="RootGrid">
         <Canvas x:Name="MyCircle" />
         <Border SnapsToDevicePixels="True" BorderBrush="Black" BorderThickness="1" CornerRadius="1" Margin="10"

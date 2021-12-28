@@ -9,12 +9,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using DrawGrid.Converter;
-using DrawGrid.Data;
 using DrawGrid.Keyboard;
 using DrawGrid.Model;
 using DrawGrid.View;
 using DrawGrid.ViewModel;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using WpfAnimatedGif;
 
 namespace DrawGrid
@@ -26,10 +25,13 @@ namespace DrawGrid
     {
         private readonly Polyline _polyline = new Polyline();
         private readonly KeyboardHook _keyboardHook;
+        private readonly MainViewModel context;
 
         public MainWindow()
         {
             InitializeComponent();
+            context = new MainViewModel();
+            DataContext = context;
             SizeChanged += MainWindow_Resize;
 
             _keyboardHook = new KeyboardHook();
@@ -46,7 +48,7 @@ namespace DrawGrid
             ImageBehavior.SetAnimatedSource(MyImage, gif);
             ImageBehavior.SetRepeatBehavior(MyImage, RepeatBehavior.Forever);
 
-            Messenger.Default.Register<Message>(this, MessageToken.MainPoster, OnMessageHandle);
+            WeakReferenceMessenger.Default.Register<Message>(this, OnReceive);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -55,28 +57,28 @@ namespace DrawGrid
             _keyboardHook.UnHook();
         }
 
-        private void OnMessageHandle(Message msg)
+        private void OnReceive(object recipient, Message msg)
         {
             switch (msg.Key)
             {
-                case Message.Main.DrawCircle:
+                case Message.DrawCircle:
                 {
-                    OnDrawCircle(msg.Msg);
+                    OnDrawCircle(msg.Key);
                 }
                     break;
-                case Message.Main.GeneratePoint:
+                case Message.GeneratePoint:
                 {
-                    OnDrawPath(msg.Msg);
+                    OnDrawPath(msg.Key);
                 }
                     break;
-                case Message.Main.InstantAdd:
+                case Message.InstantAdd:
                 {
-                    OnInstantAdd(msg.Msg);
+                    OnInstantAdd(msg.Key);
                 }
                     break;
-                case Message.Main.InstantRemove:
+                case Message.InstantRemove:
                 {
-                    OnInstantRemove(msg.Msg);
+                    OnInstantRemove(msg.Key);
                 }
                     break;
             }
@@ -93,23 +95,23 @@ namespace DrawGrid
 
         private void DrawPath(Panel panel)
         {
-            _polyline.Points = ViewModelLocator.Instance.Main.Collection;
+            _polyline.Points = context.Collection;
             _polyline.Stroke = new SolidColorBrush(Colors.Black);
             _polyline.StrokeThickness = 1;
             panel.Children.Add(_polyline);
 
-            var tipText = new TextBlock {FontSize = 10};
+            var tipText = new TextBlock { FontSize = 10 };
             var textBinding = new Binding
             {
-                Source = ViewModelLocator.Instance.Main.LastY, StringFormat = "{0}m",
+                Source = context.LastY, StringFormat = "{0}m",
                 Converter = new Analog2RealConverter()
             };
             tipText.SetBinding(TextBlock.TextProperty, textBinding);
             panel.Children.Add(tipText);
             var rotateTransform = new RotateTransform(180);
             tipText.LayoutTransform = rotateTransform;
-            Canvas.SetLeft(tipText, ViewModelLocator.Instance.Main.LastX);
-            Canvas.SetTop(tipText, ViewModelLocator.Instance.Main.LastY);
+            Canvas.SetLeft(tipText, context.LastX);
+            Canvas.SetTop(tipText, context.LastY);
         }
 
         private void OnDrawCircle(string msg, object extra = null)
@@ -139,7 +141,7 @@ namespace DrawGrid
 
                 if (null == _tipsTimer)
                 {
-                    _tipsTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 0, 5)};
+                    _tipsTimer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 5) };
                     _tipsTimer.Tick += (sender, args) =>
                     {
                         if (null != _point && _hasAdded)

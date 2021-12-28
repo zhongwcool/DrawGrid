@@ -2,23 +2,18 @@
 {
     public class Message
     {
-        public Message(string key, string msg = "", object extra = null)
+        public Message(string key, object extra = null)
         {
             Key = key;
-            Msg = msg;
             Extra = extra;
         }
 
         public string Key { get; }
-        public string Msg { get; }
         public object Extra { get; }
 
-        public static class Main
-        {
-            public const string GeneratePoint = nameof(GeneratePoint);
-            public const string DrawCircle = nameof(DrawCircle);
-            public const string InstantAdd = nameof(InstantAdd);
-            public const string InstantRemove = nameof(InstantRemove);
-        }
+        public const string GeneratePoint = nameof(GeneratePoint);
+        public const string DrawCircle = nameof(DrawCircle);
+        public const string InstantAdd = nameof(InstantAdd);
+        public const string InstantRemove = nameof(InstantRemove);
     }
 }
